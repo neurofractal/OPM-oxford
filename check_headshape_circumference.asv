@@ -1,0 +1,110 @@
+%__________________________________________________________________________
+% Script to check the circumference of a 3D model head scan from the
+% Einscan
+
+% Authors:  Robert Seymour      (rob.seymour@psych.ox.ac.uk)    
+%__________________________________________________________________________
+
+cd('/Users/robertseymour/data/20241216_oxford_pilot')
+
+headshape = ft_read_headshape('seamus_head.ply');
+headshape = ft_convert_units(headshape,'mm');
+
+figure; ft_plot_mesh(headshape);
+
+cfg                 = [];
+cfg.method          = 'fiducial';
+cfg.coordsys        = 'neuromag';
+headshape_realign   = ft_meshrealign(cfg, headshape);
+
+figure; hold on;
+ft_plot_headshape(headshape_realign);
+ft_plot_axes(headshape_realign);
+view([125 10]);
+lighting gouraud
+material dull
+light
+
+
+% Example data: Replace with your actual vertices and faces
+vertices = headshape_realign.pos; faces = headshape_realign.tri;
+
+% Define the slicing plane (e.g., z = z_level)
+z_level = 30; % Adjust to the height you want
+tol = 1e-3; % Tolerance for finding intersections
+
+% Find edges of the model
+edges = unique(sort([faces(:, [1, 2]); faces(:, [2, 3]); faces(:, [1, 3])], 2), 'rows');
+
+% Get vertices of the edges
+v1 = vertices(edges(:, 1), :);
+v2 = vertices(edges(:, 2), :);
+
+% Find edges that intersect the plane
+mask = (v1(:, 3) - z_level) .* (v2(:, 3) - z_level) < 0; % Sign change
+intersecting_edges = edges(mask, :);
+
+% Interpolate to find intersection points
+t = (z_level - v1(mask, 3)) ./ (v2(mask, 3) - v1(mask, 3));
+intersection_points = v1(mask, :) + t .* (v2(mask, :) - v1(mask, :));
+
+figure; 
+set(gcf,'Position',[1 1 1600 800]);
+subplot(1,2,1);
+hold on;
+ft_plot_headshape(headshape_realign);
+ft_plot_axes(headshape_realign);
+ft_plot_mesh(intersection_points,'vertexcolor','b','vertexsize',20);
+view([125 10]);
+lighting gouraud
+material dull
+light
+
+% Project to 2D (e.g., xy-plane)
+projected_points = intersection_points(:, 1:2);
+
+% Use boundary to order the points into a closed loop
+shrink_factor = 0.9; % Adjust between 0 (convex hull) and 1 (tighter fit)
+k = boundary(projected_points(:, 1), projected_points(:, 2), shrink_factor);
+
+% Extract ordered points
+ordered_points = projected_points(k, :);
+
+% Visualize the boundary to verify correctness
+subplot(1,2,2);
+plot(ordered_points(:, 1), ordered_points(:, 2), 'k-', 'LineWidth', 4); 
+hold on;
+% Scatter the points in small, semi-transparent red dots
+scatter(projected_points(:, 1), projected_points(:, 2), 10, 'r', 'filled', 'MarkerFaceAlpha', 0.5);
+% Adjust axes and labels
+axis equal;
+title('Projected Contour with Boundary');
+xlabel('X (mm)');
+ylabel('Y (mm)');
+title()
+
+% Compute circumference
+distances = sqrt(sum(diff([ordered_points; ordered_points(1, :)]).^2, 2));
+circumference = sum(distances);
+
+% Display the result
+fprintf('Estimated Circumference (using boundary): %.2f mm\n', circumference);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
