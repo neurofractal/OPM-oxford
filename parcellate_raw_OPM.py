@@ -30,7 +30,7 @@ def process_parcellated_raw(
     # Compute data rank
     # -----------------------
     rank = mne.compute_rank(clean)
-    rank['mag'] = rank['mag'] - 2
+    rank['mag'] = rank['mag'] - 3
     print(rank)
 
     # -----------------------
@@ -42,7 +42,7 @@ def process_parcellated_raw(
         clean,
         {'mag'},
         pick_ori="max-power-pre-weight-norm",
-        reduce_rank=True,
+        reduce_rank=False,
         rank=rank,
     )
     print("Applying beamformer spatial filters")
