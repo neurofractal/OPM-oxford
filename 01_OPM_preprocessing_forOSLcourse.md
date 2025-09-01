@@ -70,7 +70,7 @@ raw      = mne.io.read_raw_fif(filename, preload=True)
 fig = mne.viz.plot_alignment(raw.info,dig=True)
 ```
 
-![png](screenshot_sensors_headshape.png)
+![png](01_OPM_preprocessing_forOSLcourse_files/screenshot_sensors_headshape.png)
 
 ## Plot the Raw Data
 
@@ -494,9 +494,9 @@ plot_ica_topomaps_Z(raw_notch, ica, batch_size=60, colormap='Spectral_r')
 
 Component 40 corresponds to an eye-blink artefact and 59 is a horizontal eye-movement artefact (note, the frontal topography of the component and sharper jumps)
 
-![png](ica1.png)
+![png](01_OPM_preprocessing_forOSLcourse_files/ica1.png)
 
-![png](ica2.png)
+![png](01_OPM_preprocessing_forOSLcourse_files/ica2.png)
 
 
 ### Manually specify the components to exclude
