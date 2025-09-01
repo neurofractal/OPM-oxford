@@ -101,7 +101,7 @@ raw_C.save(output_filename, overwrite=True)
     
 ![png](03_rhino_coreg_files/03_rhino_coreg_7_1.png)
     
-<img src="03_rhino_coreg_files/downsample_headshape.png" width="800px" />
+<img src="03_rhino_coreg_files/downsample_headshape.png" width="600px" />
 
 
 ## Reload the downsampled headshape version of the raw file
@@ -193,7 +193,7 @@ source_recon.rhino.coreg_display(
 )
 ```
 
-![png](03_rhino_coreg_files/coreg_accuracy.png)
+<img src="03_rhino_coreg_files/coreg_accuracy.png" width="600px" />
 
 ### Create 8mm single-shell grid
 
@@ -227,6 +227,7 @@ mne.viz.plot_alignment(
     src=fwd['src'],
 )
 ```
+<img src="03_rhino_coreg_files/forward.png" width="600px" />
 
-![png](03_rhino_coreg_files/forward.png)
+
 
