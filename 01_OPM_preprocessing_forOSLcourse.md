@@ -62,13 +62,19 @@ filename = 'BIDS/sub-{}/ses-{}/meg/sub-{}_ses-{}_task-{}_run-001_meg.fif'.format
 raw      = mne.io.read_raw_fif(filename, preload=True)
 ```
 
-## Plot Sensor Layout and Data
+## Plot Sensor Layout and Headshape in 3D
 
 
 ```python
 # Plot the sensors to check they are in the right orientation
 fig = mne.viz.plot_alignment(raw.info,dig=True)
 ```
+
+![png](screenshot_sensors_headshape.png)
+
+## Plot the Raw Data
+
+### Note the very large low-frequency artefacts when the person is moving (this is normal!)
 
 ```python
 # Plot the first 10s of raw data
@@ -149,7 +155,7 @@ raw_downsampled.plot(start=20,duration=10,picks=Z_picks,n_channels=64,highpass=2
 
 
 
-## Plot the PSD
+## Plot the Power Spectral Density (PSD)
 
 ### Note we have some bad channels!
 
@@ -174,9 +180,9 @@ plt.show()
     
 
 
-## Detect Bad Chans from PSD
+## Detect Bad Chans from the PSD
 
-#### Mark bad chans based on the PSD using an interative plot - I will soon add this to osl-ephys
+#### Mark bad chans based on the PSD using a statistic threshold - this is being added to osl-ephys
 
 
 ```python
@@ -293,9 +299,9 @@ np.save('events.npy', events)
 
 ```
 
-## Preprocess OPM Data
+## Homogenous Field Correction (HFC) - Order 1 and 2
 
-### HFC - Order 1 and 2
+Homogeneous Field Correction (HFC) estimates and subtracts the spatially homogeneous component of the magnetic field from OPM recordings, suppressing environmental and movement-related noise while retaining neural signal.
 
 Specify order = 1 for homogenous field or = 2 to also include gradients
 
@@ -352,7 +358,7 @@ plt.show()
     
 
 
-### Band-Pass (2-50 Hz) and Notch (50, 100 Hz) Filter
+### Band-Pass using a Butterworth filter (2-50 Hz) and Notch Filter (50, 100 Hz) 
 
 
 ```python
@@ -387,6 +393,8 @@ raw_notch.save(os.path.join(output_dir, output_file),overwrite=True)
 
 
 ## ICA
+
+### Here I am using fastica, because, well it's fast and it works! You could use a fancier ICA variant, but in my experience this suffices 99% of the time.
 
 
 ```python
@@ -484,15 +492,19 @@ plot_ica_topomaps_Z(raw_notch, ica, batch_size=60, colormap='Spectral_r')
 
 ```
 
+Component 40 corresponds to an eye-blink artefact and 59 is a horizontal eye-movement artefact (note, the frontal topography of the component and sharper jumps)
+
+![png](ica1.png)
+
+![png](ica2.png)
+
+
 ### Manually specify the components to exclude
 
 
 ```python
 ica.exclude = [40,59]  # indices chosen based on various plots above
-```
 
-
-```python
 # # Remove bad components from the data
 clean = ica.apply(raw_notch.copy())
 ```
@@ -511,7 +523,6 @@ clean.plot(start=20,duration=10,picks=Z_picks,n_channels=64,
     
 ![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_47_1.png)
     
-
 
 
 ## Save the Clean Data
