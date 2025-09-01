@@ -101,7 +101,7 @@ raw_C.save(output_filename, overwrite=True)
     
 ![png](03_rhino_coreg_files/03_rhino_coreg_7_1.png)
     
-![png](03_rhino_coreg_files/downsample_headshape.png)
+<img src="03_rhino_coreg_files/downsample_headshape.png" width="800px" />
 
 
 ## Reload the downsampled headshape version of the raw file
