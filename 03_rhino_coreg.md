@@ -53,7 +53,6 @@ from osl_ephys.source_recon.rhino.utils import downsample_headshape, replace_hea
 %matplotlib inline
 
 filename = 'BIDS/sub-{}/ses-{}/meg/sub-{}_ses-{}_task-{}_run-001_meg.fif'.format(subject, ses, subject, ses,task)
-# filename = 'sub-11766_ses-001_task-facescircles_run-001_meg.fif'
 raw = mne.io.read_raw_fif(filename, preload=True)
 
 # Get Headshape Points
