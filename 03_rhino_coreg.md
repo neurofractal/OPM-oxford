@@ -44,7 +44,7 @@ task        = 'fourMotor'
 
 ## Downsample Headshape and Save
 
-One of the major differences when working with data from the CERCA Magnetics system is the inclusion of headshape data from the handheld 3D EinScan. This usually gives a very dense mesh of the head, face, and neck. A lot of the points are redundant (making ICP more likely to get stuck in local minima) and some parts of the mesh don’t line up with a typical structural MRI. To get around this, we can use the downsample_headshape function with the specific parameters listed below. These settings work well for adults when the fiducials are placed correctly, but they can be less reliable for children with smaller heads.
+One of the major differences when working with data from the CERCA Magnetics system is the inclusion of headshape data from the handheld 3D EinScan. This usually gives a very dense mesh of the head, face, and neck. A lot of the points are redundant (making ICP more likely to get stuck in local minima) and some parts of the mesh don’t line up with a typical structural MRI. To get around this, we can use the ```downsample_headshape``` function with the specific parameters listed below. These settings work well for adults when the fiducials are placed correctly, but they can be less reliable for children with smaller heads.
 
 
 ```python
