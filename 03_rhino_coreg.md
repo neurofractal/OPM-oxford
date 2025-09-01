@@ -172,7 +172,7 @@ source_recon.rhino.bem_display(
 )
 ```
 
-![png](03_rhino_coreg_files/headmodel.png)
+<img src="03_rhino_coreg_files/headmodel.png" width="600px" />
 
 ## Display Coreg Accuracy
 Note: requires the sensor type to be added to *_3d.py* MNE code - I need to make a pull request to MNE
