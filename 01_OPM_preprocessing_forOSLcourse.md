@@ -39,10 +39,6 @@ plt.rcParams['font.size'] = 12  # Adjust font size as desired
 
 ```
 
-    Using matplotlib as 2D backend.
-    MNE version: 1.10.1
-
-
 
 ```python
 %matplotlib inline
@@ -66,12 +62,6 @@ filename = 'BIDS/sub-{}/ses-{}/meg/sub-{}_ses-{}_task-{}_run-001_meg.fif'.format
 raw      = mne.io.read_raw_fif(filename, preload=True)
 ```
 
-    Opening raw data file BIDS/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_meg.fif...
-        Range : 0 ... 2198783 =      0.000 ...  1465.855 secs
-    Ready.
-    Reading 0 ... 2198783  =      0.000 ...  1465.855 secs...
-
-
 ## Plot Sensor Layout and Data
 
 
@@ -80,13 +70,6 @@ raw      = mne.io.read_raw_fif(filename, preload=True)
 fig = mne.viz.plot_alignment(raw.info,dig=True)
 ```
 
-    For automatic theme detection, "darkdetect" has to be installed! You can install it with `pip install darkdetect`
-    For automatic theme detection, "darkdetect" has to be installed! You can install it with `pip install darkdetect`
-    Getting helmet for system unknown (derived from 192 MEG channel locations)
-    Channel types::	mag: 192
-
-
-
 ```python
 # Plot the first 10s of raw data
 raw.plot(highpass=1,
@@ -94,30 +77,9 @@ raw.plot(highpass=1,
          duration=40,butterfly=False,picks='mag')
 ```
 
-    Setting up band-pass filter from 1 - 1.1e+02 Hz
-    
-    IIR filter parameters
-    ---------------------
-    Butterworth bandpass zero-phase (two-pass forward and reverse) non-causal filter:
-    - Filter order 16 (effective, after forward-backward)
-    - Cutoffs at 1.00, 110.00 Hz: -6.02, -6.02 dB
-    
-
-
-
     
 ![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_11_1.png)
     
-
-
-
-
-
-    
-![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_11_2.png)
-    
-
-
 
 
 ```python
@@ -129,14 +91,12 @@ raw.plot_sensors(ch_type="mag", axes=ax3d, kind="3d")
 ax3d.view_init(azim=70, elev=15)
 ```
 
-
     
 ![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_12_0.png)
     
 
 
 ## Add in channels we know are bad - H6, A3, G8
-
 
 
 ```python
@@ -183,25 +143,6 @@ raw_downsampled.plot(start=20,duration=10,picks=Z_picks,n_channels=64,highpass=2
            butterfly=False,scalings = {'mag' : 1e-11})
 ```
 
-    Setting up high-pass filter at 2 Hz
-    
-    IIR filter parameters
-    ---------------------
-    Butterworth highpass zero-phase (two-pass forward and reverse) non-causal filter:
-    - Filter order 8 (effective, after forward-backward)
-    - Cutoff at 2.00 Hz: -6.02 dB
-    
-
-
-
-    
-![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_20_1.png)
-    
-
-
-
-
-
     
 ![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_20_2.png)
     
@@ -227,19 +168,6 @@ ax.set_ylim(1, 100)
 
 plt.show()
 ```
-
-    Setting 1200 of 439757 (0.27%) samples to NaN, retaining 438557 (99.73%) samples.
-    Effective window size : 6.667 (s)
-    Plotting power spectral density (dB=True).
-
-
-    /var/folders/lc/2w90j0s17cx3s8fl2m6h2gz80000gn/T/ipykernel_53141/4116602915.py:4: UserWarning: Infinite value in PSD for channels T14 H6 Z, T14 H6 Y.
-    These channels might be dead.
-      fig = psd.plot()  # This now returns a figure
-    /opt/anaconda3/envs/osle/lib/python3.12/site-packages/mne/viz/utils.py:158: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
-      (fig or plt).show(**kwargs)
-
-
 
     
 ![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_23_2.png)
@@ -342,19 +270,6 @@ plt.show()
 
 ```
 
-    Setting 1200 of 439757 (0.27%) samples to NaN, retaining 438557 (99.73%) samples.
-    Effective window size : 10.000 (s)
-    Plotting power spectral density (dB=True).
-
-
-    /var/folders/lc/2w90j0s17cx3s8fl2m6h2gz80000gn/T/ipykernel_53141/128647179.py:8: UserWarning: Infinite value in PSD for channels T14 H6 Z, T14 H6 Y.
-    These channels might be dead.
-      fig = psd.plot()  # This now returns a figure
-    /opt/anaconda3/envs/osle/lib/python3.12/site-packages/mne/viz/utils.py:158: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
-      (fig or plt).show(**kwargs)
-
-
-
     
 ![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_29_2.png)
     
@@ -377,9 +292,6 @@ events, event_ids = mne.events_from_annotations(raw_downsampled, regexp=pattern)
 np.save('events.npy', events)
 
 ```
-
-    Used Annotations descriptions: [np.str_('left_arm'), np.str_('left_leg'), np.str_('right_arm'), np.str_('right_leg')]
-
 
 ## Preprocess OPM Data
 
@@ -430,29 +342,9 @@ plt.show()
 
 ```
 
-    3 projection items deactivated
-    8 projection items deactivated
-    Setting 1200 of 439757 (0.27%) samples to NaN, retaining 438557 (99.73%) samples.
-    Effective window size : 6.667 (s)
-    Setting 1200 of 439757 (0.27%) samples to NaN, retaining 438557 (99.73%) samples.
-    Effective window size : 6.667 (s)
-    Setting 1200 of 439757 (0.27%) samples to NaN, retaining 438557 (99.73%) samples.
-    Effective window size : 6.667 (s)
-    Plotting power spectral density (dB=True).
-
-
-    /var/folders/lc/2w90j0s17cx3s8fl2m6h2gz80000gn/T/ipykernel_53141/3568700118.py:34: UserWarning: Infinite value in PSD for channels T14 H6 Z, T14 H6 Y.
-    These channels might be dead.
-      fig = psd_HFC2.plot()  # This now returns a figure
-    /opt/anaconda3/envs/osle/lib/python3.12/site-packages/mne/viz/utils.py:158: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
-      (fig or plt).show(**kwargs)
-
-
-
     
 ![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_34_2.png)
     
-
 
 
     
@@ -478,29 +370,6 @@ freqs = (50, 100)
 raw_notch = raw_bp.copy().notch_filter(freqs=freqs, picks='mag',notch_widths=2)
 ```
 
-    Filtering raw data in 1 contiguous segment
-    Setting up band-pass filter from 2 - 50 Hz
-    
-    IIR filter parameters
-    ---------------------
-    Butterworth bandpass zero-phase (two-pass forward and reverse) non-causal filter:
-    - Filter order 16 (effective, after forward-backward)
-    - Cutoffs at 2.00, 50.00 Hz: -6.02, -6.02 dB
-    
-    Filtering raw data in 1 contiguous segment
-    Setting up band-stop filter
-    
-    FIR filter parameters
-    ---------------------
-    Designing a one-pass, zero-phase, non-causal bandstop filter:
-    - Windowed time-domain design (firwin) method
-    - Hamming window with 0.0194 passband ripple and 53 dB stopband attenuation
-    - Lower transition bandwidth: 0.50 Hz
-    - Upper transition bandwidth: 0.50 Hz
-    - Filter length: 1981 samples (6.603 s)
-    
-
-
 ## Save the Intermediate Data
 
 
@@ -516,25 +385,6 @@ os.makedirs(output_dir, exist_ok=True)
 raw_notch.save(os.path.join(output_dir, output_file),overwrite=True)
 ```
 
-    Overwriting existing file.
-    Writing /Users/robertseymour/data/study-OPM_training/BIDS/derivatives/preprocessing/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_preICA.fif
-    Overwriting existing file.
-
-
-    /var/folders/lc/2w90j0s17cx3s8fl2m6h2gz80000gn/T/ipykernel_53141/3755338357.py:9: RuntimeWarning: This filename (/Users/robertseymour/data/study-OPM_training/BIDS/derivatives/preprocessing/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_preICA.fif) does not conform to MNE naming conventions. All raw files should end with raw.fif, raw_sss.fif, raw_tsss.fif, _meg.fif, _eeg.fif, _ieeg.fif, raw.fif.gz, raw_sss.fif.gz, raw_tsss.fif.gz, _meg.fif.gz, _eeg.fif.gz or _ieeg.fif.gz
-      raw_notch.save(os.path.join(output_dir, output_file),overwrite=True)
-
-
-    Closing /Users/robertseymour/data/study-OPM_training/BIDS/derivatives/preprocessing/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_preICA.fif
-    [done]
-
-
-
-
-
-    [PosixPath('/Users/robertseymour/data/study-OPM_training/BIDS/derivatives/preprocessing/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_preICA.fif')]
-
-
 
 ## ICA
 
@@ -549,52 +399,6 @@ ica = ICA(n_components=60, random_state=34, max_iter=800,method='fastica')
 ica.fit(raw_notch)  # Fit ICA on all channels
 
 ```
-
-    Fitting ICA to data using 178 channels (please be patient, this may take a while)
-    Omitting 1200 of 439757 (0.27%) samples, retaining 438557 (99.73%) samples.
-        Applying projection operator with 8 vectors (pre-whitener computation)
-        Applying projection operator with 8 vectors (pre-whitener application)
-    Selecting by number: 60 components
-        Applying projection operator with 8 vectors (pre-whitener application)
-    Fitting ICA took 17.2s.
-
-
-
-
-
-<table class="table mne-repr-table">
-    <tr>
-        <th>Method</th>
-        <td>fastica</td>
-    </tr>
-    <tr>
-        <th>Fit parameters</th>
-        <td>algorithm=parallel<br />fun=logcosh<br />fun_args=None<br />max_iter=800<br /></td>
-    </tr>
-    <tr>
-        <th>Fit</th>
-        <td>57 iterations on raw data (438557 samples)</td>
-    </tr>
-
-    <tr>
-        <th>ICA components</th>
-        <td>60</td>
-    </tr>
-    <tr>
-        <th>Available PCA components</th>
-        <td>178</td>
-    </tr>
-    <tr>
-        <th>Channel types</th>
-        <td>mag</td>
-    </tr>
-    <tr>
-        <th>ICA components marked for exclusion</th>
-        <td>&mdash;</td>
-    </tr>
-
-</table>
-
 
 
 ### Plot ICA sources - the default osl-ephys plotter cannot only plot the Z-orientation
@@ -680,13 +484,6 @@ plot_ica_topomaps_Z(raw_notch, ica, batch_size=60, colormap='Spectral_r')
 
 ```
 
-        Applying projection operator with 8 vectors (pre-whitener application)
-    Creating RawArray with float64 data, n_channels=60, n_times=439757
-        Range : 0 ... 439756 =      0.000 ...  1465.853 secs
-    Ready.
-    NOTE: pick_channels() is a legacy function. New code should use inst.pick(...).
-
-
 ### Manually specify the components to exclude
 
 
@@ -700,13 +497,6 @@ ica.exclude = [40,59]  # indices chosen based on various plots above
 clean = ica.apply(raw_notch.copy())
 ```
 
-    Applying ICA to Raw instance
-        Applying projection operator with 8 vectors (pre-whitener application)
-        Transforming to ICA space (60 components)
-        Zeroing out 2 ICA components
-        Projecting back using 178 PCA components
-
-
 ### Plot again
 
 
@@ -717,15 +507,6 @@ clean.plot(start=20,duration=10,picks=Z_picks,n_channels=64,
            butterfly=False,scalings = {'mag' : 1e-11})
 # plt.savefig('clean_plot.png', dpi=300, bbox_inches='tight')
 ```
-
-
-    
-![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_47_0.png)
-    
-
-
-
-
 
     
 ![png](01_OPM_preprocessing_forOSLcourse_files/01_OPM_preprocessing_forOSLcourse_47_1.png)
@@ -748,23 +529,3 @@ os.makedirs(output_dir, exist_ok=True)
 clean.save(os.path.join(output_dir, output_file),overwrite=True)
 
 ```
-
-    Overwriting existing file.
-    Writing /Users/robertseymour/data/study-OPM_training/BIDS/derivatives/preprocessing/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_clean.fif
-    Overwriting existing file.
-
-
-    /var/folders/lc/2w90j0s17cx3s8fl2m6h2gz80000gn/T/ipykernel_53141/2785310491.py:9: RuntimeWarning: This filename (/Users/robertseymour/data/study-OPM_training/BIDS/derivatives/preprocessing/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_clean.fif) does not conform to MNE naming conventions. All raw files should end with raw.fif, raw_sss.fif, raw_tsss.fif, _meg.fif, _eeg.fif, _ieeg.fif, raw.fif.gz, raw_sss.fif.gz, raw_tsss.fif.gz, _meg.fif.gz, _eeg.fif.gz or _ieeg.fif.gz
-      clean.save(os.path.join(output_dir, output_file),overwrite=True)
-
-
-    Closing /Users/robertseymour/data/study-OPM_training/BIDS/derivatives/preprocessing/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_clean.fif
-    [done]
-
-
-
-
-
-    [PosixPath('/Users/robertseymour/data/study-OPM_training/BIDS/derivatives/preprocessing/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_clean.fif')]
-
-
