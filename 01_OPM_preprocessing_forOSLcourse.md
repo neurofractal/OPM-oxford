@@ -70,6 +70,8 @@ raw      = mne.io.read_raw_fif(filename, preload=True)
 fig = mne.viz.plot_alignment(raw.info,dig=True)
 ```
 
+Note, the very dense headshape we get from the 3D scanner.
+
 ![png](01_OPM_preprocessing_forOSLcourse_files/screenshot_sensors_headshape.png)
 
 ## Plot the Raw Data
@@ -394,7 +396,7 @@ raw_notch.save(os.path.join(output_dir, output_file),overwrite=True)
 
 ## ICA
 
-### Here I am using fastica, because, well it's fast and it works! You could use a fancier ICA variant, but in my experience this suffices 99% of the time.
+Here I am using fastica, because, well it's fast and it works! You could use a fancier ICA variant, but in my experience this suffices 99% of the time.
 
 
 ```python
