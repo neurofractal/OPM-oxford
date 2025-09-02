@@ -30,7 +30,7 @@ def process_parcellated_raw(
     # Compute data rank
     # -----------------------
     rank = mne.compute_rank(clean)
-    rank['mag'] = rank['mag'] - 3
+    rank['mag'] = rank['mag'] - 7
     print(rank)
 
     # -----------------------

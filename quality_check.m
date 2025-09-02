@@ -14,7 +14,7 @@ spm_path        = '/Users/robertseymour/scripts/spm-main'
 addpath(genpath(script_dir));
 
 % BIDS data directory:
-data_dir        = '/Users/robertseymour/data/20241212_oxford_pilot/';
+data_dir        = '/Users/robertseymour/data/20241216_oxford_pilot/';
 cd(data_dir);
 
 %% Load the Data
@@ -86,7 +86,7 @@ cfg.plot_chans      = 'yes';
 cfg.plot_ci         = 'no';
 cfg.plot_legend     = 'yes';
 [pow freq]          = ft_opm_psd(cfg,rawData);
-%ylim([5 1e4])
+ylim([5 1e4])
 
 %% Check for Outlier Sensors
 pow_median = nanmedian(pow,3);

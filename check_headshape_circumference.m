@@ -5,15 +5,15 @@
 % Authors:  Robert Seymour      (rob.seymour@psych.ox.ac.uk)    
 %__________________________________________________________________________
 
-addpath('C:\Users\Cerca Stim\Documents\MATLAB\fieldtrip-20240110');
+%addpath('C:\Users\Cerca Stim\Documents\MATLAB\fieldtrip-20240110');
 ft_defaults
 [pathstr, name, ext] = fileparts(which("estimate_circumference.m"));
 addpath(pathstr)
 
 %% File
-cd('C:\Users\Cerca Stim\Documents\EXScan H\OHBA_lab_library');
+cd('/Volumes/Robert T5/oxford_OPM_quality');
 
-file = 'SOS_20241216.ply';
+file = 'RS_20250107.ply';
 [~, name, ext] = fileparts(file);
 
 headshape = ft_read_headshape(file);
@@ -25,7 +25,7 @@ cfg.method          = 'fiducial';
 cfg.coordsys        = 'neuromag';
 headshape_realign   = ft_meshrealign(cfg, headshape);
 
-circumference = estimate_circumference(headshape_realign, 30)
+circumference = estimate_circumference(headshape_realign, 35)
 
 %% Scale by
 % tape_measure_value = 565; % in mm
