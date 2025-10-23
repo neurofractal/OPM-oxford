@@ -2,6 +2,10 @@
 
 ### Note: data collected at Oxford OPM Lab December 2024
 
+- One session, one run of data
+- 192 channels of data (64 sensor locations)
+- Each channel is labeled as X,Y,Z corresponding to it's sensitive orientation
+
 ### Cerca Magnetics Neuro-1, 64-sensor QZFM OPM System
 
 <img src="20250107_12_27_06_01.jpg" style="width:30%;">

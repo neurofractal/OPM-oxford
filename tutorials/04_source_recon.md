@@ -128,7 +128,7 @@ fwd = read_forward_solution(fwd_fname)
 
 #### Here we use MNE's LCMV beamformer with 5% regularisation and covariance across all trials and times. 
 
-#### Occasionally MNE estimates the rank incorrectly in OPM-MEG data due to multiple 'cliffs'. In these cases I use the code below to adjust the rank downwards.
+#### Occasionally MNE estimates the rank incorrectly in OPM-MEG data due to *multiple* sudden drops or 'cliffs' in the graph below. In these cases I use the code below to adjust the rank manually.
 
 
 ```python
@@ -365,8 +365,6 @@ cbar.ax.yaxis.label.set_rotation(0)  # Set the label orientation to upright
 # Show plot
 plt.show()
 ```
-
-
     
 ![png](04_source_recon_files/04_source_recon_32_0.png)
     
