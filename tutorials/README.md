@@ -8,3 +8,4 @@
 ## 2. [Sensor-Level Analysis (Time-Frequency)](02_sensor_level_TFR.md)
 ## 3. [Coregistration](03_rhino_coreg.md)
 ## 4. [Source Localisation](04_source_recon.md)
+## 5. [Parcellation](05_parcellation.md)
