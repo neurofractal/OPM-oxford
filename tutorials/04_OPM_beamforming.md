@@ -128,13 +128,13 @@ fig_cov = mne.viz.plot_cov(cov_all, epochs.info)
 
 
     
-![png](./tutorials/04_beamforming/output_14_0.png)
+![png](./04_beamforming/output_14_0.png)
     
 
 
 
     
-![png](./tutorials/04_beamforming/output_14_1.png)
+![png](./04_beamforming/output_14_1.png)
     
 
 
@@ -322,7 +322,7 @@ plt.show()
 
 
     
-![png](./tutorials/04_beamforming/output_28_0.png)
+![png](./04_beamforming/output_28_0.png)
     
 
 
@@ -367,7 +367,7 @@ plt.show()
 
 
     
-![png](./tutorials/04_beamforming/output_31_0.png)
+![png](./04_beamforming/output_31_0.png)
     
 
 
@@ -412,7 +412,7 @@ plt.show()
 
 
     
-![png](./tutorials/04_beamforming/output_34_0.png)
+![png](./04_beamforming/output_34_0.png)
     
 
 
