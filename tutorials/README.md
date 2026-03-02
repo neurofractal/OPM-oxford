@@ -42,8 +42,8 @@ get_data(basedir)
 - **[Notebook](01_OPM_preprocessing.ipynb)**
 - **[Markdown](01_OPM_preprocessing.md)**
 ## 2. Sensor-Level Analysis (Time-Frequency
-- **Notebook [LINK]**
-- **[Markdown](01_OPM_preprocessing.md)**
+- **[Notebook](02_OPM_sensorlevel_TFR.ipynb)**
+- **[Markdown](02_OPM_sensorlevel_TFR.md)**
 ## 3. [Coregistration](03_rhino_coreg.md)
 ## 4. [Source Localisation](04_source_recon.md)
 

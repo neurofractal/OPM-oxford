@@ -4,9 +4,6 @@
 
 ### Cerca Magnetics Neuro-1, 64-sensor QZFM OPM System
 
-<img src="20250107_12_27_06_01.jpg" style="width:30%;">
-
-
 ```python
 # We start by importing the relevant packages
 import osl_ephys
@@ -25,40 +22,59 @@ plt.rcParams['font.sans-serif'] = ['Helvetica']
 plt.rcParams['font.size'] = 12  # Adjust font size as desired
 
 %matplotlib inline
-
 ```
 
 ## Load the Preprocessed data
 
-
 ```python
 subject = '001'
 ses     = '001'
+run     = '001'
 task    = 'fourMotor'
 
-output_dir = 'BIDS/derivatives/preprocessing/sub-{}/ses-{}/meg'.format(subject,ses)
-output_file = 'sub-{}_ses-{}_task-{}_run-001_clean.fif'.format(subject,ses,task)
+# Root of the dataset
+data_dir = os.path.join(os.getcwd(), 'study-FourMotorOPM')
+
+# BIDS derivatives directory for cleaned MEG data
+output_dir = os.path.join(
+    data_dir,'BIDS', 'derivatives', 'preprocessing',
+    f'sub-{subject}', f'ses-{ses}', 'meg'
+)
+
+# Cleaned data filename
+output_file = (f'sub-{subject}_ses-{ses}_task-{task}_run-{run}_clean.fif')
+
+# Full path to the file
 filename = os.path.join(output_dir, output_file)
+
+print(f"Loading cleaned data from: {filename}")
+
+# Load the cleaned Raw object
 clean = mne.io.read_raw_fif(filename, preload=True)
 ```
-
 
 ## Epoch the data using the embedded triggers
 
 Load the events structure computed earlier
 
-
 ```python
-# Load events from .npy file
-events = np.load('events.npy')
+# Load events from .npy file saved from tutorial 01
+events_file = os.path.join(
+    data_dir, 'BIDS', 'derivatives', 'event',
+    f'sub-{subject}', f'ses-{ses}', 'meg',
+    f'sub-{subject}_ses-{ses}_task-{task}_run-{run}_events.npy'
+)
+
+events = np.load(events_file)
+
 event_id = {'left_arm': 1, 'left_leg': 2, 'right_arm': 3, 'right_leg': 4}
+
 epochs = mne.Epochs(clean, events, event_id = event_id, tmin=-3, tmax=7,preload=True,event_repeated='drop')
 ```
 
 ## Get only the Z channels and then split the data into left vs. right trials
 
 We record from 3 orientations for every sensor, however only the Z-orientation is 'useful', corresponding to SQUID-MEG data. Therefore for sensor-level analysis we are only analysing and plotting Z-orientation sensors.
-
 
 ```python
 # Just get Z channels
@@ -77,7 +93,6 @@ Here we use Mortlet wavelets with 2 cycles per frequency, however there are othe
 - All trials
 - Trials where the participant moved their **left** arm or leg
 - Trials where the participat moved their **right** arm or leg
-
 
 ```python
 # TFR
@@ -116,19 +131,14 @@ power_R  = right.compute_tfr(
 
 First we plot a topoplot across all sensors
 
-
 ```python
 power_all.plot_topo(fmin=10,fmax = 46,baseline=(-1.5, 0), mode="percent",tmin=-1,
                   vmin=-1,vmax=1)
 ```
 
-    
-![png](02_sensor_level_TFR_files/02_sensor_level_TFR_13_1.png)
-    
-
+![output_0.png](./02_sensor_level_TFR/output_0.png)
 
 Then we plot from 12-30 Hz and 1-4s
-
 
 ```python
 # Plot topomap
@@ -163,23 +173,18 @@ for ax in fig.axes:
         break  # Done with one topomap
 
 fig.show()
-
 ```
 
-    
-![png](02_sensor_level_TFR_files/02_sensor_level_TFR_15_2.png)
-    
-
+![output_1.png](./02_sensor_level_TFR/output_1.png)
 
 ### Plot Power in Left vs Right Movement Trials
 
 8-15Hz and 1-4s gives the clearest pattern of hemispheric asymmetry 
 
-
 ```python
 # Compute dB contrast
 power_db = power_L.copy()
-power_db.data = 10 * np.log10(power_L.data / power_R.data)
+power_db.data = 20 * np.log10(power_L.data / power_R.data)
 # power_db.plot_topo(fmin=10,fmax = 50, tmin=-1, title="Average power")
 
 # Plot topomap (spatial distribution) averaged over 12–30 Hz and 1–4 sec
@@ -215,7 +220,5 @@ plt.title("Left vs Right Movement (8-12Hz)",fontsize=23,fontweight='bold')
 fig.show()
 ```
 
-    
-![png](02_sensor_level_TFR_files/02_sensor_level_TFR_17_2.png)
-    
+![output_2.png](./02_sensor_level_TFR/output_2.png)
 
