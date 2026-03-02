@@ -35,16 +35,30 @@ plt.rcParams['font.size'] = 12  # Adjust font size as desired
 subject      = '001'
 ses          = '001'
 task         = 'fourMotor'
-subjects_dir = 'coreg_ses-{}'.format(ses)
+run          = '001'
+
+data_dir = os.path.join(os.getcwd(),'study-FourMotorOPM')
+
+subjects_dir = os.path.join(
+    data_dir, 'BIDS', 'derivatives', 'coreg'
+)
+os.makedirs(subjects_dir, exist_ok=True)
+
 ```
 
 ## Load in the Clean Data (after pre-processing)
 
 
 ```python
-output_dir = 'BIDS/derivatives/preprocessing/sub-{}/ses-{}/meg'.format(subject,ses)
-output_file = 'sub-{}_ses-{}_task-{}_run-001_clean.fif'.format(subject,ses,task)
+output_dir = os.path.join(data_dir,
+    'BIDS', 'derivatives', 'preprocessing',
+    f'sub-{subject}', f'ses-{ses}', 'meg'
+)
+
+output_file = f'sub-{subject}_ses-{ses}_task-{task}_run-{run}_clean.fif'
+
 filename = os.path.join(output_dir, output_file)
+
 clean = mne.io.read_raw_fif(filename, preload=True)
 ```
 
@@ -63,8 +77,15 @@ clean.filter(l_freq=8.0, h_freq=30.0, method='iir', iir_params=iir_params)
 
 
 ```python
-# Load events from .npy file
-events = np.load('events.npy')
+# Load events from .npy file saved from tutorial 01
+events_file = os.path.join(
+    data_dir, 'BIDS', 'derivatives', 'event',
+    f'sub-{subject}', f'ses-{ses}', 'meg',
+    f'sub-{subject}_ses-{ses}_task-{task}_run-{run}_events.npy'
+)
+
+events = np.load(events_file)
+
 event_id = {'left_arm': 1, 'left_leg': 2, 'right_arm': 3, 'right_leg': 4}
 epochs = mne.Epochs(clean, events, event_id = event_id, tmin=-3, tmax=7,preload=True,event_repeated='drop')
 
@@ -104,16 +125,22 @@ cov_baseline = mne.compute_covariance(baseline, method='empirical')
 fig_cov = mne.viz.plot_cov(cov_all, epochs.info)
 
 ```
-    
-![png](04_source_recon_files/04_source_recon_14_1.png)
-    
+
 
     
-![png](04_source_recon_files/04_source_recon_14_2.png)
+![png](output_14_0.png)
     
 
 
-### Read the Pre-Computed Forward Solution
+
+    
+![png](output_14_1.png)
+    
+
+
+## Read the Pre-Computed Forward Solution
+
+#### This has been precomputed using the subject's MRI. The original MRI cannot be shared.
 
 
 ```python
@@ -128,7 +155,7 @@ fwd = read_forward_solution(fwd_fname)
 
 #### Here we use MNE's LCMV beamformer with 5% regularisation and covariance across all trials and times. 
 
-#### Occasionally MNE estimates the rank incorrectly in OPM-MEG data due to *multiple* sudden drops or 'cliffs' in the graph below. In these cases I use the code below to adjust the rank manually.
+#### Occasionally MNE estimates the rank incorrectly in OPM-MEG data due to multiple 'cliffs'. In these cases I use the code below to adjust the rank downwards.
 
 
 ```python
@@ -137,17 +164,19 @@ rank['mag'] = rank['mag']-1
 print(rank)
 ```
 
+
 ```python
 from mne.beamformer import apply_lcmv_cov, make_lcmv
 
-filters = make_lcmv(epochs.info, 
-                            fwd, 
-                            cov_all, 
-                            reg=0.05,
-                            noise_cov=None, 
-                            pick_ori='max-power',
-                            rank=rank
-                            ) 
+filters = make_lcmv(
+    epochs.info,        # sensor info (channels, geometry, bads)
+    fwd,                # forward model (lead field)
+    cov_all,            # data covariance
+    reg=0.05,           # covariance regularization
+    noise_cov=None,     # no separate noise covariance
+    pick_ori='max-power',  # orientation with max power
+    rank=rank           # data rank
+)
 
 ```
 
@@ -159,8 +188,21 @@ stc_right    = apply_lcmv_cov(cov_right, filters)
 stc_baseline = apply_lcmv_cov(cov_baseline, filters)
 ```
 
-## Plot Left Arm/Leg vs. Baseline in dB
+#### Make a sourcespace output directory in the BIDS-style derivatives folder
 
+
+
+```python
+sourcespace_dir = os.path.join(
+    data_dir,
+    'BIDS',
+    'derivatives',
+    'sourcespace'
+)
+
+# Create coreg directory if it does not already exist
+os.makedirs(sourcespace_dir, exist_ok=True)
+```
 
 ### Below is a generic function to compute the difference between two source estimates (volumetric) using dB, followed by a spatial smoothing step
 
@@ -237,6 +279,8 @@ def compute_and_save_dB(
 
 ```
 
+## Plot Left Arm/Leg vs. Baseline in dB
+
 
 ```python
 smoothed_file = compute_and_save_dB(
@@ -244,7 +288,7 @@ smoothed_file = compute_and_save_dB(
     active_stc=stc_left,            # your active SourceEstimate
     subjects_dir=subjects_dir,      # FreeSurfer SUBJECTS_DIR
     subject=subject,                # subject name/ID
-    output_file=f"left_stc_dB_diff-ses{ses}.nii",  # unsmoothed NIfTI filename
+    output_file=os.path.join(sourcespace_dir,f"left_diff-ses-{ses}_run-{run}.nii"),  # unsmoothed NIfTI filename
     spatial_resolution=8,           # mm resolution
     reference_brain="mni",          # reference space
     smooth_fwhm=5                   # Gaussian smoothing FWHM in mm
@@ -278,7 +322,7 @@ plt.show()
 
 
     
-![png](04_source_recon_files/04_source_recon_26_0.png)
+![png](output_28_0.png)
     
 
 
@@ -291,7 +335,7 @@ smoothed_file = compute_and_save_dB(
     active_stc=stc_right,            # your active SourceEstimate
     subjects_dir=subjects_dir,      # FreeSurfer SUBJECTS_DIR
     subject=subject,                # subject name/ID
-    output_file=f"right_stc_dB_diff-ses{ses}.nii",  # unsmoothed NIfTI filename
+    output_file=os.path.join(sourcespace_dir,f"right_diff-ses-{ses}_run-{run}.nii"),  # unsmoothed NIfTI filename
     spatial_resolution=8,           # mm resolution
     reference_brain="mni",          # reference space
     smooth_fwhm=5                   # Gaussian smoothing FWHM in mm
@@ -323,7 +367,7 @@ plt.show()
 
 
     
-![png](04_source_recon_files/04_source_recon_29_0.png)
+![png](output_31_0.png)
     
 
 
@@ -336,7 +380,7 @@ smoothed_file = compute_and_save_dB(
     active_stc=stc_left,            # your active SourceEstimate
     subjects_dir=subjects_dir,      # FreeSurfer SUBJECTS_DIR
     subject=subject,                # subject name/ID
-    output_file=f"left_vs_right_stc_dB_diff-ses{ses}.nii",  # unsmoothed NIfTI filename
+    output_file=os.path.join(sourcespace_dir,f"left_vs_right-ses-{ses}_run-{run}.nii"),  # unsmoothed NIfTI filename
     spatial_resolution=8,           # mm resolution
     reference_brain="mni",          # reference space
     smooth_fwhm=5                   # Gaussian smoothing FWHM in mm
@@ -365,7 +409,14 @@ cbar.ax.yaxis.label.set_rotation(0)  # Set the label orientation to upright
 # Show plot
 plt.show()
 ```
+
+
     
-![png](04_source_recon_files/04_source_recon_32_0.png)
+![png](output_34_0.png)
     
 
+
+
+```python
+
+```
