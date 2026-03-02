@@ -38,8 +38,12 @@ get_data(basedir)
 
 #### Note - more subjects will be uploaded soon
 
-## 1. [Preprocessing](01_OPM_preprocessing_forOSLcourse.md)
-## 2. [Sensor-Level Analysis (Time-Frequency)](02_sensor_level_TFR.md)
+## 1. Preprocessing
+- **[Notebook](01_OPM_preprocessing.ipynb)**
+- **[Markdown](01_OPM_preprocessing.md)**
+## 2. Sensor-Level Analysis (Time-Frequency
+- **Notebook [LINK]**
+- **[Markdown](01_OPM_preprocessing.md)**
 ## 3. [Coregistration](03_rhino_coreg.md)
 ## 4. [Source Localisation](04_source_recon.md)
 
