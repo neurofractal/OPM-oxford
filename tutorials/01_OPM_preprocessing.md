@@ -108,7 +108,7 @@ raw.plot(highpass=1,
          duration=40,butterfly=False,picks='mag')
 ```
 
-![output_0.png](./01_OPM_preprocessing_files/output_0.png)
+![output_0.png](./01_OPM_preprocessing/output_0.png)
 
 ```python
 fig = plt.figure()
@@ -119,7 +119,7 @@ raw.plot_sensors(ch_type="mag", axes=ax3d, kind="3d")
 ax3d.view_init(azim=70, elev=15)
 ```
 
-![output_1.png](./01_OPM_preprocessing_files/output_1.png)
+![output_1.png](./01_OPM_preprocessing/output_1.png)
 
 ## Add in channels we know are bad - H6, A3, G8
 
@@ -163,7 +163,7 @@ raw_downsampled.plot(start=20,duration=10,picks=Z_picks,n_channels=64,highpass=2
            butterfly=False,scalings = {'mag' : 1e-11})
 ```
 
-![output_2.png](./01_OPM_preprocessing_files/output_2.png)
+![output_2.png](./01_OPM_preprocessing/output_2.png)
 
 ## Plot the Power Spectral Density (PSD)
 
@@ -184,7 +184,7 @@ ax.set_ylim(1, 100)
 plt.show()
 ```
 
-![output_3.png](./01_OPM_preprocessing_files/output_3.png)
+![output_3.png](./01_OPM_preprocessing/output_3.png)
 
 ## Detect Bad Chans from the PSD using GESD
 
@@ -300,7 +300,7 @@ ax.set_ylim(2, 100)
 plt.show()
 ```
 
-![output_4.png](./01_OPM_preprocessing_files/output_4.png)
+![output_4.png](./01_OPM_preprocessing/output_4.png)
 
 ### Band-Pass using a Butterworth filter (2-50 Hz) and Notch Filter (50, 100 Hz)
 
