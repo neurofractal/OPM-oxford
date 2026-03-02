@@ -39,14 +39,14 @@ get_data(basedir)
 #### Note - more subjects will be uploaded soon
 
 ## 1. Preprocessing
-- **[Notebook](01_OPM_preprocessing.ipynb)**
-- **[Markdown](01_OPM_preprocessing.md)**
+- **[Notebook](./01_OPM_preprocessing.ipynb)**
+- **[Markdown](./01_OPM_preprocessing.md)**
 ## 2. Sensor-Level Analysis (Time-Frequency)
-- **[Notebook](02_OPM_sensor_level_TFR.ipynb)**
-- **[Markdown](02_OPM_sensor_level_TFR.md)**
-## 3. [Coregistration](03_rhino_coreg.md)
+- **[Notebook](./02_OPM_sensor_level_TFR.ipynb)**
+- **[Markdown](./2_OPM_sensor_level_TFR.md)**
+## 3. [Coregistration](./03_rhino_coreg.md)
 - To Follow... fixing one bug
 ## 4. [Source Localisation](04_source_recon.md)
-- **[Notebook](04_OPM_beamforming.ipynb)**
-- **[Markdown](04_OPM_beamforming.md)**
-## 5. [Parcellation](05_parcellation.md)
+- **[Notebook](./04_OPM_beamforming.ipynb)**
+- **[Markdown](./04_OPM_beamforming.md)**
+## 5. [Parcellation](./05_parcellation.md)
