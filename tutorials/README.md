@@ -14,7 +14,10 @@ Please ensure your environment is up to date before continuing.
 
 <img src="20250107_12_27_06_01.jpg" style="width:30%;">
 
-## Download the sample data from osf (sub-001)
+Please note, MNE currently cannot plot CERCA sensor layouts (pull-request required). Use [00_fix_3D_plotting.ipynb](00_fix_3D_plotting.ipynb) to fix.
+
+## Download the sample data from osf
+#### Also see [00_download_data.ipynb](00_download_data.ipynb)
 
 ```python
 import os
