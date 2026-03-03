@@ -39,8 +39,6 @@ def get_data(outdir, zip_name="study-FourMotorOPM.zip"):
 get_data(basedir)
 ```
 
-#### Note - more subjects will be uploaded soon
-
 ## 1. Preprocessing
 - **[Notebook](./01_OPM_preprocessing.ipynb)**
 - **[Markdown](./01_OPM_preprocessing.md)**
