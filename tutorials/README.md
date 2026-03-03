@@ -44,12 +44,12 @@ get_data(basedir)
 ## 2. Sensor-Level Analysis (Time-Frequency)
 - **[Notebook](./02_sensor_level_TFR.ipynb)**
 - **[Markdown](./02_sensor_level_TFR.md)**
-## 3. [Coregistration](./03_rhino_coreg.md)
+## 3. Coregistration
 - To Follow... fixing one bug
-## 4. [Source Localisation](04_source_recon.md)
+## 4. Source Localisation
 - **[Notebook](./04_OPM_beamforming.ipynb)**
 - **[Markdown](./04_OPM_beamforming.md)**
-## 5. [Parcellation](./05_parcellation.md)
+## 5. Parcellation
 #### This uses resting-state data
 - **[Notebook](./05_OPM_parcellation.ipynb)**
 - **[Markdown](./05_OPM_parcellation.md)**
