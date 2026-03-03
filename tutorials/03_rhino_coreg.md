@@ -10,6 +10,7 @@
 ```python
 # We start by importing the relevant packages
 import osl_ephys
+from osl_ephys import source_recon
 import numpy as np
 import mne
 import glob
@@ -21,17 +22,14 @@ import matplotlib.pyplot as plt
 plt.rcParams['font.family'] = 'sans-serif'
 plt.rcParams['font.sans-serif'] = ['Helvetica']
 plt.rcParams['font.size'] = 12  # Adjust font size as desired
-
 ```
 
 ## Get FSL Setup
 
 
 ```python
-from osl_ephys import source_recon
-fsl_dir = '/Users/robertseymour/fsl'
-source_recon.setup_fsl(fsl_dir)
-```
+fsl_dir = '/Users/robertseymour/fsl' # Change for your FSL path
+source_recon.setup_fsl(fsl_dir)```
 
 ## Specify Subject
 
@@ -39,8 +37,11 @@ source_recon.setup_fsl(fsl_dir)
 ```python
 subject     = '001'
 ses         = '001'
+run         = '001'
 task        = 'fourMotor'
-```
+
+# This is my local path because the structural MRI will not be uploaded to osf
+data_dir    = '/Users/robertseymour/data/study-OPM_training/' ```
 
 ## Downsample Headshape and Save
 
@@ -52,7 +53,11 @@ from osl_ephys.source_recon.rhino.utils import downsample_headshape, replace_hea
 
 %matplotlib inline
 
-filename = 'BIDS/sub-{}/ses-{}/meg/sub-{}_ses-{}_task-{}_run-001_meg.fif'.format(subject, ses, subject, ses,task)
+filename = os.path.join(
+    data_dir,'BIDS',f'sub-{subject}',f'ses-{ses}','meg',
+    f'sub-{subject}_ses-{ses}_task-{task}_run-{run}_meg.fif'
+)
+
 raw = mne.io.read_raw_fif(filename, preload=True)
 
 # Get Headshape Points
@@ -86,7 +91,6 @@ fig = mne.viz.plot_alignment(raw_C.info, dig=True)
 print('Saving...')
 output_filename = '{}_hs_downsample-raw.fif'.format(filename.rstrip('.fif'))
 raw_C.save(output_filename, overwrite=True)
-
 ```
 
     Opening raw data file BIDS/sub-001/ses-001/meg/sub-001_ses-001_task-fourMotor_run-001_meg.fif...
@@ -99,25 +103,52 @@ raw_C.save(output_filename, overwrite=True)
 
 
     
-![png](03_rhino_coreg_files/03_rhino_coreg_7_1.png)
+![png](03_rhino_coreg/03_rhino_coreg_7_1.png)
     
-<img src="03_rhino_coreg_files/downsample_headshape.png" width="600px" />
+<img src="03_rhino_coreg/downsample_headshape.png" width="600px" />
 
 
 ## Reload the downsampled headshape version of the raw file
 
 
 ```python
-filename = 'BIDS/sub-{}/ses-{}/meg/sub-{}_ses-{}_task-{}_run-001_meg_hs_downsample-raw.fif'.format(subject,ses,subject,ses,task)
-raw = mne.io.read_raw_fif(filename, preload=True)
-```
+filename = os.path.join(
+    data_dir,
+    f'BIDS/sub-{subject}/ses-{ses}/meg/'
+    f'sub-{subject}_ses-{ses}_task-{task}_run-{run}_meg_hs_downsample-raw.fif'
+)
+
+raw = mne.io.read_raw_fif(filename, preload=True)```
 
 ## Setup subjects_dir and the structural MRI
 
 
 ```python
-subjects_dir = 'coreg_ses-{}'.format(ses)
-mri_file     = '{}.nii'.format(subject)
+# Base coregistration directory inside the BIDS folder
+subjects_dir = os.path.join(
+    data_dir,
+    'BIDS',
+    'derivatives',
+    'coreg'
+)
+
+# Create coreg directory if it does not already exist
+os.makedirs(subjects_dir, exist_ok=True)
+
+# Path to the subject's anatomical MRI file
+mri_file = os.path.join(
+    data_dir,
+    'BIDS',
+    f'sub-{subject}',
+    f'ses-{ses}',
+    'anat',
+    f'sub-{subject}.nii'
+)
+
+# Nicely formatted output
+print("\nCoregistration paths:")
+print(f"  Subject MEG dir: {subjects_dir}")
+print(f"  MRI file       : {mri_file}\n")
 ```
 
 ## Run MRI through FSL
@@ -130,16 +161,14 @@ source_recon.rhino.compute_surfaces(
     subject=subject,
     include_nose=True,
     do_mri2mniaxes_xform=True
-)
-```
+)```
 
 ## Save the headshape data to the right place in subjects_dir
 
 
 ```python
 from osl_ephys.source_recon.rhino.utils import save_polhemus_fif
-save_polhemus_fif(raw,subjects_dir=subjects_dir,subject=subject)
-```
+save_polhemus_fif(raw,subjects_dir=subjects_dir,subject=subject)```
 
     Saved files to coreg_ses-001/001/rhino/coreg
 
@@ -156,8 +185,7 @@ source_recon.rhino.coreg(
     use_nose=True,
     allow_smri_scaling=False,
     n_init = 10,
-)
-```
+)```
 
 ### Display Headmodel
 
@@ -169,10 +197,9 @@ source_recon.rhino.bem_display(
     display_outskin_with_nose=False,
     display_sensors=True,
     plot_type="surf",
-)
-```
+)```
 
-<img src="03_rhino_coreg_files/headmodel.png" width="600px" />
+<img src="03_rhino_coreg/headmodel.png" width="600px" />
 
 ## Display Coreg Accuracy
 Note: requires the sensor type to be added to *_3d.py* MNE code - I need to make a pull request to MNE
@@ -189,11 +216,9 @@ source_recon.rhino.coreg_display(
     display_headshape_pnts=True,
     display_outskin = True,
     # filename='./bem_dispay.html',
+)```
 
-)
-```
-
-<img src="03_rhino_coreg_files/coreg_accuracy.png" width="600px" />
+<img src="03_rhino_coreg/coreg_accuracy.png" width="600px" />
 
 ### Create 8mm single-shell grid
 
@@ -205,8 +230,7 @@ source_recon.rhino.forward_model(
     subject=subject,
     model="Single Layer",
     gridstep=gridstep,
-)
-```
+)```
 
 ### Read Forward Solution and Plot
 
@@ -225,9 +249,8 @@ mne.viz.plot_alignment(
     subject=subject,  # Name of the subject
     subjects_dir=subjects_dir,  # Path to the subject's MRI directory
     src=fwd['src'],
-)
-```
-<img src="03_rhino_coreg_files/forward.png" width="600px" />
+)```
+<img src="03_rhino_coreg/forward.png" width="600px" />
 
 
 
