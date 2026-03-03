@@ -1,7 +1,5 @@
 # OPM-MEG Tutorials in osl-ephys
 
-### The tutorials below are currently being updated. 
-
 ### ⚙️ Software requirements
 
 These tutorials rely on **homogeneous field correction**  
@@ -46,7 +44,8 @@ get_data(basedir)
 - **[Notebook](./02_sensor_level_TFR.ipynb)**
 - **[Markdown](./02_sensor_level_TFR.md)**
 ## 3. Coregistration
-- To Follow... fixing one bug
+- **[Notebook](./03_rhino_coreg.ipynb)**
+- **[Markdown](./03_rhino_coreg.md)**
 ## 4. Source Localisation
 - **[Notebook](./04_OPM_beamforming.ipynb)**
 - **[Markdown](./04_OPM_beamforming.md)**
