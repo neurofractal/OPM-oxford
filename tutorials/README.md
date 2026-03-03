@@ -50,3 +50,6 @@ get_data(basedir)
 - **[Notebook](./04_OPM_beamforming.ipynb)**
 - **[Markdown](./04_OPM_beamforming.md)**
 ## 5. [Parcellation](./05_parcellation.md)
+#### This uses resting-state data
+- **[Notebook](./05_OPM_parcellation.ipynb)**
+- **[Markdown](./05_OPM_parcellation.md)**

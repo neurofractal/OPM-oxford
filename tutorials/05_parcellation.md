@@ -9,8 +9,6 @@
 - Bad channels and bad segments marked
 - Homogenous Field Correction applied (order = 2)
 - Coregistration using RHINO has been performed
-
-
 ```python
 # We start by importing the relevant packages
 import osl_ephys
@@ -28,6 +26,7 @@ import os
 plt.rcParams['font.family'] = 'sans-serif'
 plt.rcParams['font.sans-serif'] = ['Helvetica']
 plt.rcParams['font.size'] = 12  # Adjust font size as desired
+
 ```
 
 ```python
@@ -35,29 +34,34 @@ plt.rcParams['font.size'] = 12  # Adjust font size as desired
 ```
 
 ## Specify Subject and subjects_dir and data_dir
-
 ```python
 subject      = '005'
 ses          = '001'
 task         = 'rest'
 run          = '001'
-subjects_dir = 'subjects_dir/coreg_ses-{}'.format(ses)
 
-data_dir = '/Volumes/Robert T5/study-RS_reliability'
+data_dir = os.path.join(os.getcwd(),'study-FourMotorOPM')
+
+subjects_dir = os.path.join(
+    data_dir, 'BIDS', 'derivatives', 'coreg'
+)
+os.makedirs(subjects_dir, exist_ok=True)
+
 ```
 
 ## Load in the Clean Data (after pre-processing)
-
-
 ```python
-output_dir = '{}/BIDS/derivatives/preprocessing/sub-{}/ses-{}/meg'.format(data_dir,subject,ses)
-output_file = 'sub-{}_ses-{}_task-{}_run-{}_clean.fif'.format(subject,ses,task,run)
+output_dir = os.path.join(data_dir,
+    'BIDS', 'derivatives', 'preprocessing',
+    f'sub-{subject}', f'ses-{ses}', 'meg'
+)
+
+output_file = f'sub-{subject}_ses-{ses}_task-{task}_run-{run}_clean.fif'
+
 filename = os.path.join(output_dir, output_file)
 ```
 
 ## Setup the Parcellation
-
-
 ```python
 parcellation_fname = 'Glasser52_binary_space-MNI152NLin6_res-8x8x8.nii.gz'
 parcellation.plot_parcellation(parcellation_fname)
@@ -72,19 +76,15 @@ print(labels)
 
 ```
 
-    
-![png](05_parcellation_files/05_parcellation_8_1.png)
-    
+![Output 1](05_parcellation/output_1.png)
 
-## Parcellate
-
-
+## Read the clean data
 ```python
 # Load raw data
 clean = mne.io.read_raw_fif(filename, preload=True)
 ```
 
-
+## Compute the rank
 ```python
 # Compute and plot the rank
 cov_all = mne.compute_raw_covariance(clean)
@@ -104,15 +104,13 @@ rank['mag'] = rank['mag'] - 3
 
 ```
 
-    
-![png](05_parcellation_files/05_parcellation_11_1.png)
-   
-    
-![png](05_parcellation_files/05_parcellation_11_2.png)
+![Output 2](05_parcellation/output_2.png)
 
-### Find and Apply LCMV beamformer filters
+![Output 3](05_parcellation/output_3.png)
 
+## Beamform
 ```python
+# Make LCMV beamformer filters
 filters = beamforming.make_lcmv(
     subjects_dir,
     subject,
@@ -125,13 +123,12 @@ filters = beamforming.make_lcmv(
 print("Applying beamformer spatial filters")
 ```
 
-
 ```python
 # Apply beamformer, keep bad segments for now
 stc = beamforming.apply_lcmv(clean, filters, reject_by_annotation=None)
 ```
 
-### Transform timeseries to MNI space
+## Transform timeseries to MNI space
 
 ```python
 recon_timeseries_mni, _, recon_coords_mni, _ = beamforming.transform_recon_timeseries(
@@ -143,7 +140,7 @@ recon_timeseries_mni, _, recon_coords_mni, _ = beamforming.transform_recon_times
 print("Dimensions of reconstructed timeseries in MNI space (dipoles x tpts):", recon_timeseries_mni.shape)
 ```
 
-### Parcellate source time series into atlas-defined brain regions
+## Parcellate source time series into atlas-defined brain regions
 
 ```python
 parcel_ts, _, _ = parcellation.vol_parcellate_timeseries(
@@ -158,7 +155,6 @@ parcel_ts, _, _ = parcellation.vol_parcellate_timeseries(
 ### Annotations
 
 The conversion to MNE data structure automatically excludes bad segments (turns those segments to NaN or 0). To keep all data but mark the data as 'bad' we do some jiggery pokery to remove annotations, convert the parcellated time-series to an MNE structure then add the annotations back in.
-
 
 ```python
 # Copy and remove annotations
@@ -181,35 +177,34 @@ parc_raw.set_channel_types({ch: 'mag' for ch in parc_raw.info['ch_names']})
 ```
 
 ### Plot
-
 ```python
 parc_raw.plot(scalings='auto')
 ```
- 
-![png](05_parcellation_files/05_parcellation_20_0.png)
 
+![Output 4](05_parcellation/output_4.png)
+
+![Output 5](05_parcellation/output_5.png)
 
 ## Post-Processing
 
-Now that we have the parcellated data we can analyse it! 
-
-Here I am computing spectral power in the alpha band (8-12 Hz) and comparing eyes open versus eyes closed epochs
-
-### Load Events File Computed Earlier
-
+Now that we have the parcellated data we can analyse it! Here I am computing spectral power in the alpha band (8-12 Hz) and comparing eyes open versus eyes closed epochs
 ```python
-output_dir = '{}/BIDS/derivatives/events/sub-{}/ses-{}/meg'.format(data_dir,subject,ses)
-output_file = 'sub-{}_ses-{}_task-{}_events.npy'.format(subject,ses,task)
+# Load Events File Computed Earlier
+output_dir = (
+    f"{data_dir}/BIDS/derivatives/event/"
+    f"sub-{subject}/ses-{ses}/meg"
+)
+
+output_file = f"sub-{subject}_ses-{ses}_task-{task}_events.npy"
 
 # Create the directory if it doesn't exist
 os.makedirs(output_dir, exist_ok=True)
 
-# Save the events file
+# Load the events file
 events = np.load(os.path.join(output_dir, output_file))
 ```
 
 ### Cut into 2x 300s chunks
-
 ```python
 # Define event codes for each condition
 event_id = {'eyes_open': 2, 'eyes_closed': 1}
@@ -248,20 +243,18 @@ eyes_closed = parc_raw.copy().crop(tmin=tmin, tmax=tmax)
 ```
 
 ### Plot
-
 ```python
 eyes_open.plot(scalings='auto', duration=10, title="Eyes Open")
 eyes_closed.plot(scalings='auto', duration=10, title="Eyes Closed")
 ```
 
-![png](05_parcellation_files/05_parcellation_26_0.png)
-  
-![png](05_parcellation_files/05_parcellation_26_1.png)
+![Output 6](05_parcellation/output_6.png)
 
+![Output 7](05_parcellation/output_7.png)
+
+![Output 8](05_parcellation/output_8.png)
 
 ### Compute PSD
-
-
 ```python
 import matplotlib.pyplot as plt
 
@@ -300,12 +293,10 @@ plt.tight_layout()
 plt.show()
 
 ```
-    
-![png](05_parcellation_files/05_parcellation_28_2.png)
-    
+
+![Output 9](05_parcellation/output_9.png)
 
 ### Segment the data into 2s chunks
-
 ```python
 import mne
 import numpy as np
@@ -341,10 +332,7 @@ eyes_closed_segmented   = segment_epoched(eyes_closed, duration=2)
 
 ```
 
-
 ### Compute Time-Frequency Respresentations
-
-
 ```python
 # Define frequencies of interest and number of cycles for Morlet wavelets
 freqs = np.arange(8, 13, 1)  # 8-12 Hz
@@ -363,48 +351,65 @@ alpha_power_diff = 20*(np.log(alpha_power_open/alpha_power_closed))
 ```
 
 ### Plot by interpolating the data onto a whole-brain map
-
-
 ```python
 from osl_ephys.source_recon.parcellation import parcel_vector_to_voxel_grid, find_file
 import nibabel as nib
+from nilearn import plotting
 
-mask_file="MNI152_T1_8mm_brain.nii.gz"
-parcellation_fname = 'Glasser52_binary_space-MNI152NLin6_res-8x8x8.nii.gz'
+# Template brain mask used to define the voxel grid and spatial metadata
+mask_fname = "MNI152_T1_8mm_brain.nii.gz"
 
-# # Calculate power map grid
-power_map = parcel_vector_to_voxel_grid(mask_file, parcellation_fname, alpha_power_diff)
+# Parcellation in MNI space at 8 mm resolution (binary parcels)
+parcellation_fname = "Glasser52_binary_space-MNI152NLin6_res-8x8x8.nii.gz"
 
-# Find paths to mask file on disk
-mask_file = find_file(mask_file, freesurfer=False)
+# Convert parcel-wise values to a voxel-wise 3D grid
+# alpha_power_diff should be a 1D array with one value per parcel
+power_map = parcel_vector_to_voxel_grid(
+    mask_fname,
+    parcellation_fname,
+    alpha_power_diff,
+)
 
-# Load the mask
+# Resolve the mask filename to its full path on disk
+mask_file = find_file(mask_fname, freesurfer=False)
+
+# Load the mask NIfTI so we can reuse its affine and header
 mask = nib.load(mask_file)
-nii = nib.Nifti1Image(power_map[:, :, :], mask.affine, mask.header)
 
-from nilearn import image, plotting
-# Plot the smoothed NIfTI image on a glass brain
+# Wrap the voxel grid as a NIfTI image for nilearn plotting
+nii = nib.Nifti1Image(power_map, mask.affine, mask.header)
 
-# Calculate the absolute maximum value in the power_map
+# Compute symmetric color limits so positive and negative effects are comparable
 abs_max_value = np.max(np.abs(power_map))
 
-# Save the plot as a PNG image with 500 DPI
-display = plotting.plot_glass_brain(nii, title='',
-                          threshold=0, colorbar=True, cmap="Spectral_r", plot_abs=False,
-                          vmin=-abs_max_value, vmax=abs_max_value,display_mode="lzr",)
+# Plot a glass brain showing signed values (not absolute)
+display = plotting.plot_glass_brain(
+    nii,
+    title="",
+    threshold=0,
+    colorbar=True,
+    cmap="Spectral_r",
+    plot_abs=False,
+    vmin=-abs_max_value,
+    vmax=abs_max_value,
+    display_mode="lzr",
+)
 
-# Add the colorbar label using Matplotlib
+# Customize the colorbar (label in dB, larger tick labels)
+# Note: display._cbar is a private attribute and may change in future nilearn versions
 cbar = display._cbar
-cbar.set_label('dB', fontsize=15)
+cbar.set_label("dB", fontsize=15)
 cbar.ax.tick_params(labelsize=17)
-cbar.ax.yaxis.set_label_position('left')
-# cbar.ax.yaxis.set_label_coords(-3.5, 0.46)
-cbar.ax.yaxis.label.set_rotation(0)  # Set the label orientation to upright
+cbar.ax.yaxis.set_label_position("left")
+cbar.ax.yaxis.label.set_rotation(0)
 
-# Show plot
+# Render the figure
 plt.show()
 ```
 
-    
-![png](05_parcellation_files/05_parcellation_34_0.png)
-    
+![Output 10](05_parcellation/output_10.png)
+
+```python
+
+```
+
